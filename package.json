@@ -2,14 +2,16 @@
   "name": "whatstest",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "dev": "node main.js"
+    "dev": "node src/main.js"
   },
   "author": "jefaokpta@hotmail.com",
   "license": "ISC",
   "dependencies": {
-    "@adiwajshing/baileys": "^3.5.0"
+    "@adiwajshing/baileys": "^3.5.0",
+    "axios": "^0.21.1",
+    "express": "^4.17.1"
   }
 }
