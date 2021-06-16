@@ -5,7 +5,8 @@
   "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "dev": "node src/main.js"
+    "dev": "node src/main.js",
+    "start": "forever src/main.js"
   },
   "author": "jefaokpta@hotmail.com",
   "license": "ISC",

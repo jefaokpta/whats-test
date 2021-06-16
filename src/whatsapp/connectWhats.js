@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import {sendTxt} from "./sendMessage.js";
-import {whatsToAPI} from "../client/receiveMessage.js";
+import {qrCodeConfirmed, sendQrCode, whatsToAPI} from "../client/receiveMessage.js";
 import {WhatsConnection} from "./whatsConnection.js";
 
 
@@ -43,12 +43,16 @@ export async function connectToWhatsApp () {
         // Now, use the 'qr' string to display in QR UI or send somewhere
         console.log('QR PARA MOSTRAR NA WEB')
         console.log(qr)
+        sendQrCode(qr)
     });
 
     (fs.existsSync(authFile) && conn.loadAuthInfo (authFile))
 
     await conn.connect ()
-        .then(() => console.log('CONECTOU COM SUCESSO'))
+        .then(() => {
+            salvaSessao()
+            console.log('CONECTOU COM SUCESSO')
+        })
         .catch(error => {
             console.log('TENTANDO PEGAR QR CODE')
             //fs.rmSync('./auth_info.json')
@@ -61,9 +65,10 @@ export async function connectToWhatsApp () {
                 .catch(error => console.log('SEGUNDA TENTATIVA FALHA'))
         })
 
-    salvaSessao()
+    //salvaSessao()
     function salvaSessao() {
         console.log (`SALVANDO SESSAO`)
+        qrCodeConfirmed()
         const authInfo = conn.base64EncodedAuthInfo() // get all the auth info we need to restore this session
         fs.writeFileSync(authFile, JSON.stringify(authInfo, null, '\t')) // save this info to a file
     }
