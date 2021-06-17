@@ -22,6 +22,18 @@ export function sendQrCode(qrCode) {
          .catch(e => console.log(e.message))
 }
 
+export function authConfirmed(authInfo){
+    authInfo['companyId'] = process.env.COMPANY || 12
+    console.log(authInfo)
+    axios.post(`${urlBase}/api/register/auth`, authInfo)
+        .then(() => console.log('QRCODE SALVO NO BANCO!'))
+        .catch(e => console.log(e.message))
+}
+
+export function restoreAuth(){
+    return axios.get(`${urlBase}/api/register/auth/${process.env.COMPANY || 12}`)
+}
+
 export function qrCodeConfirmed() {
      axios.get(`${urlBase}/api/register/${process.env.COMPANY || 12}`)
          .then(() => console.log('QRCODE CONFIRMADO!'))

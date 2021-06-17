@@ -1,12 +1,10 @@
-import * as fs from "fs";
-import {sendTxt} from "./sendMessage.js";
-import {qrCodeConfirmed, sendQrCode, whatsToAPI} from "../client/receiveMessage.js";
+import {authConfirmed, restoreAuth, sendQrCode, whatsToAPI} from "../client/receiveMessage.js";
 import {WhatsConnection} from "./whatsConnection.js";
 
 
 export async function connectToWhatsApp () {
     const conn = WhatsConnection.connection
-    const authFile = './auth_info.json'
+    //const authFile = './auth_info.json'
 
     // conn.connectOptions = {
     //     waitOnlyForLastMessage: false,
@@ -34,9 +32,10 @@ export async function connectToWhatsApp () {
 
     conn.on ('credentials-updated', () => { // salva sessao
         // save credentials whenever updated
-        console.log (`credentials updated!`)
-        const authInfo = conn.base64EncodedAuthInfo() // get all the auth info we need to restore this session
-        fs.writeFileSync(authFile, JSON.stringify(authInfo, null, '\t')) // save this info to a file
+        console.log (`CREDENCIAIS ATUALIZADAS? QUANDO ACONTECE ISSO!`)
+        authConfirmed(conn.base64EncodedAuthInfo())
+        //const authInfo = conn.base64EncodedAuthInfo() // get all the auth info we need to restore this session
+        //fs.writeFileSync(authFile, JSON.stringify(authInfo, null, '\t')) // save this info to a file
     });
 
     conn.on('qr', qr => {
@@ -46,31 +45,26 @@ export async function connectToWhatsApp () {
         sendQrCode(qr)
     });
 
-    (fs.existsSync(authFile) && conn.loadAuthInfo (authFile))
+    console.log('BUSCANDO AUTH NO BANCO')
+    await restoreAuth().then(res => {
+        const authInfo = res.data
+        //console.log(authInfo)
+        conn.loadAuthInfo(authInfo)
+    }).catch(e => console.log(e.message))
 
+    console.log('TENTANDO CONEXAO')
     await conn.connect ()
         .then(() => {
             salvaSessao()
             console.log('CONECTOU COM SUCESSO')
-        })
-        .catch(error => {
-            console.log('TENTANDO PEGAR QR CODE')
-            //fs.rmSync('./auth_info.json')
-            conn.clearAuthInfo()
-            conn.connect()
-                .then(() => {
-                    console.log('SEGUNDA TENTATIVA SUCESSO')
-                    salvaSessao()
-                })
-                .catch(error => console.log('SEGUNDA TENTATIVA FALHA'))
-        })
+        }).catch(error => console.log(error.message))
 
-    //salvaSessao()
     function salvaSessao() {
         console.log (`SALVANDO SESSAO`)
-        qrCodeConfirmed()
-        const authInfo = conn.base64EncodedAuthInfo() // get all the auth info we need to restore this session
-        fs.writeFileSync(authFile, JSON.stringify(authInfo, null, '\t')) // save this info to a file
+        //qrCodeConfirmed()
+        authConfirmed(conn.base64EncodedAuthInfo())
+        //const authInfo = conn.base64EncodedAuthInfo() // get all the auth info we need to restore this session
+        //fs.writeFileSync(authFile, JSON.stringify(authInfo, null, '\t')) // save this info to a file
     }
 
     conn.on('chat-update', async chatUpdate => {
