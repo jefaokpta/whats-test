@@ -2,8 +2,9 @@ import {authConfirmed, restoreAuth, sendQrCode, whatsToAPI} from "../client/rece
 import {WhatsConnection} from "./whatsConnection.js";
 
 
+export const conn = WhatsConnection.connection
+
 export async function connectToWhatsApp () {
-    const conn = WhatsConnection.connection
     //const authFile = './auth_info.json'
 
     // conn.connectOptions = {
@@ -102,8 +103,14 @@ export async function connectToWhatsApp () {
             }
 
         }
-        else console.log (chatUpdate) // see updates (can be archived, pinned etc.)
-        //console.log(chatUpdate)
+        else if(chatUpdate.imgUrl){
+            console.log('APARENTEMENTE TROCA DE IMG DE PERFIL')
+            console.log(chatUpdate)
+        }
+        else {
+            console.log('NAO DEFINIDOS AINDA')
+            console.log (chatUpdate)
+        }
 
 
     })

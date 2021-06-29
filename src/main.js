@@ -4,7 +4,7 @@ import {messageController} from "./controller/messageController.js";
 
 const router = express()
 router.use(express.json())
-const port = 3000
+const port = process.env.PORT || 3001
 
 // run in main file
 connectToWhatsApp ()

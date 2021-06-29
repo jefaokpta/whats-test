@@ -1,6 +1,6 @@
 import axios from "axios";
 
- //const urlBase = 'http://128.0.0.1:8080'
+// const urlBase = 'http://128.0.0.1:8080'
 const urlBase = 'http://192.168.15.152:8080'
 
 export function whatsToAPI(message) {
@@ -9,7 +9,8 @@ export function whatsToAPI(message) {
          message: message.message,
          messageTimestamp: message.messageTimestamp,
          status: message.status,
-         company: process.env.COMPANY || 12
+         company: process.env.COMPANY || 12,
+         instanceId: process.env.API_PORT || 3001
      })
 }
 
