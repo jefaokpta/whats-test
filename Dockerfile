@@ -13,4 +13,4 @@ COPY ./src ./src
 CMD [ "node", "src/main.js" ]
 
 ## docker build --tag jefaokpta/node-whats:1.0 .
-## docker run -d --name=whats-3001 -p3001:3000 -e COMPANY=12 -e API_PORT=3001 --restart=on-failure jefaokpta/node-whats:1.0
+## docker run -d --name=whats-12 -p3001:3000 -e COMPANY=12 -e API_PORT=3001 --restart=on-failure -v /tmp/whatsMediaHost:/whatsMedia jefaokpta/node-whats:1.0
