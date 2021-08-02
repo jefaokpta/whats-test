@@ -77,14 +77,6 @@ export async function connectToWhatsApp () {
             // if(message.message.conversation === 'Oi')
             //     sendTxt(conn, message.key.remoteJid)
 
-            if(message.message.imageMessage){
-                console.log('EH IMAGEM')
-                return
-            }else if(message.message.videoMessage){
-                console.log('EH VIDEO')
-                return
-            }
-
             try {
                 const resApi = await whatsToAPI(message)
 

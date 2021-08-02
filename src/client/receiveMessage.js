@@ -30,6 +30,22 @@ export async function whatsToAPI(message) {
          messageData['mediaType'] = 'DOCUMENT'
          messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'document')
      }
+     else if(message.message.videoMessage){
+         messageData.mediaMessage = true
+         messageData['mediaType'] = 'VIDEO'
+         messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'video')
+         if(message.message.videoMessage.caption){
+             messageData['mediaCaption'] = message.message.videoMessage.caption
+         }
+     }
+     else if(message.message.imageMessage){
+         messageData.mediaMessage = true
+         messageData['mediaType'] = 'IMAGE'
+         messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'image')
+         if(message.message.imageMessage.caption){
+             messageData['mediaCaption'] = message.message.imageMessage.caption
+         }
+     }
      else{
          messageData.message = message.message
      }
