@@ -80,14 +80,10 @@ export async function connectToWhatsApp () {
             if(message.message.imageMessage){
                 console.log('EH IMAGEM')
                 return
-            }else if(message.message.documentMessage){
-                console.log('EH DOCUMENTO')
-                return
             }else if(message.message.videoMessage){
                 console.log('EH VIDEO')
                 return
             }
-            else console.log('EH TEXTO')
 
             try {
                 const resApi = await whatsToAPI(message)

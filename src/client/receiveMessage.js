@@ -1,9 +1,14 @@
 import axios from "axios";
 import {conn} from "../whatsapp/connectWhats.js";
 
- //const urlBase = 'http://127.0.0.1:8080'
-const urlBase = 'http://128.0.0.1:8080'
- //const urlBase = 'http://192.168.15.152:8080'
+const urlBase = 'http://127.0.0.1:8080'
+const mediaFolder = 'whatsMedia'
+// const urlBase = 'http://128.0.0.1:8080'
+// const mediaFolder = '/whatsMedia'
+//const urlBase = 'http://192.168.15.152:8080'
+
+
+
 
 export async function whatsToAPI(message) {
      let messageData = {
@@ -18,13 +23,22 @@ export async function whatsToAPI(message) {
      if(message.message.audioMessage){
          messageData.mediaMessage = true
          messageData['mediaType'] = 'AUDIO'
-         const savedFilename = await conn.downloadAndSaveMediaMessage (message, '/whatsMedia/audio-'+message.key.id) // to decrypt & save to file
-         console.log(message.key.remoteJid + " MEDIA SALVA EM: " + savedFilename)
-         messageData['mediaUrl'] = savedFilename
-     }else{
+         messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'audio')
+     }
+     else if(message.message.documentMessage){
+         messageData.mediaMessage = true
+         messageData['mediaType'] = 'DOCUMENT'
+         messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'document')
+     }
+     else{
          messageData.message = message.message
      }
      return axios.post(`${urlBase}/api/messages`, messageData)
+}
+
+function downloadAndSaveMedia(message, mediaTitle) {
+    return conn.downloadAndSaveMediaMessage (message, `${mediaFolder}/${mediaTitle}-${message.key.id}`) // to decrypt & save to file
+    //console.log(message.key.remoteJid + " MEDIA SALVA EM: " + savedFilename)
 }
 
 export function sendQrCode(qrCode) {
