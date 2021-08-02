@@ -22,14 +22,26 @@ export async function connectToWhatsApp () {
 
         const unread = await conn.loadAllUnreadMessages ()
         console.log ("you have " + unread.length + " unread messages")
-        //unread.forEach(message => console.log(message))
+        let statusAPi = 500
+        const remoteJidsMap = new Map()
+        for (const message of unread) {
+            remoteJidsMap.set(message.key.remoteJid, null)
+            statusAPi = await messageToSendApi(message)
+        }
+        if(statusAPi === 200){
+            for (const remoteJid of remoteJidsMap.keys()) {
+            conn.chatRead(remoteJid)
+                    .then(() => console.log(`CHAT BOOT ${remoteJid} MARCADO COMO LIDO`))
+                    .catch(error => console.log(error.message))
+            }
+        }
     })
 
     // called when WA sends chats
     // this can take up to a few minutes if you have thousands of contacts!
-    conn.on('contacts-received', () => {
-        console.log('you have ' + Object.keys(conn.contacts).length + ' contacts')
-    });
+    // conn.on('contacts-received', () => {
+    //     console.log('you have ' + Object.keys(conn.contacts).length + ' contacts')
+    // });
 
     conn.on ('credentials-updated', () => { // salva sessao
         // save credentials whenever updated
@@ -68,23 +80,27 @@ export async function connectToWhatsApp () {
         //fs.writeFileSync(authFile, JSON.stringify(authInfo, null, '\t')) // save this info to a file
     }
 
+    async function messageToSendApi(message) {
+        console.log (message)
+        try {
+            return (await whatsToAPI(message)).status
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
+
     conn.on('chat-update', async chatUpdate => {
         // `chatUpdate` is a partial object, containing the updated properties of the chat
         // received a new message
         if (chatUpdate.messages && chatUpdate.count) {
             const message = chatUpdate.messages.all()[0]
-            console.log (message)
-            // if(message.message.conversation === 'Oi')
-            //     sendTxt(conn, message.key.remoteJid)
-
-            try {
-                const resApi = await whatsToAPI(message)
-
-                console.log('MENSAGEM RECEBIDA ACIMA '+ resApi.status)
-            }catch (e) {
-                console.log(e.message)
+            const statusApi = await messageToSendApi(message)
+            if(statusApi === 200){
+                conn.chatRead(message.key.remoteJid)
+                    .then(() => console.log(`CHAT UPDATE ${message.key.remoteJid} MARCADO COMO LIDO`))
+                    .catch(error => console.log(error.message))
             }
-
+            console.log(`CHAT UPDATE ${statusApi}`)
         }
         else if(chatUpdate.presences){
             console.log(chatUpdate)
@@ -107,7 +123,7 @@ export async function connectToWhatsApp () {
             console.log(chatUpdate)
         }
         else {
-            console.log('NAO DEFINIDOS AINDA')
+            console.log('EVENTOS NAO DEFINIDOS AINDA')
             console.log (chatUpdate)
         }
 
