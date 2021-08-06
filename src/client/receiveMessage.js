@@ -34,7 +34,10 @@ export async function whatsToAPI(message) {
          const fileExtension = fileTitle.substring(fileTitle.lastIndexOf('.'))
          const fileName = `document-${message.messageTimestamp}-${message.key.id}${fileExtension}`
          messageData['mediaUrl'] = fileName
-         fs.writeFile(`whatsMedia/${fileName}`, buffer, error => {
+         messageData['mediaFileLength'] = message.message.documentMessage.fileLength
+         messageData['mediaPageCount'] = message.message.documentMessage.pageCount
+         messageData['mediaFileTitle'] = fileTitle
+         fs.writeFile(`${mediaFolder}/${fileName}`, buffer, error => {
              if(error){ console.log(error) } else console.log('DOCUMENTO SALVO COM SUCESSO!')
          })
      }
@@ -61,7 +64,8 @@ export async function whatsToAPI(message) {
 }
 
 function downloadAndSaveMedia(message, mediaTitle) {
-    return conn.downloadAndSaveMediaMessage (message, `${mediaFolder}/${mediaTitle}-${message.key.id}`) // to decrypt & save to file
+    const fileName = `${mediaTitle}-${message.messageTimestamp}-${message.key.id}`
+    return conn.downloadAndSaveMediaMessage (message, `${mediaFolder}/${fileName}`) // to decrypt & save to file
     //console.log(message.key.remoteJid + " MEDIA SALVA EM: " + savedFilename)
 }
 
