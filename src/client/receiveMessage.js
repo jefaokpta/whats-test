@@ -1,5 +1,6 @@
 import axios from "axios";
 import {conn} from "../whatsapp/connectWhats.js";
+import * as fs from "fs";
 
 const urlBase = 'http://127.0.0.1:8080'
 const mediaFolder = 'whatsMedia'
@@ -28,7 +29,14 @@ export async function whatsToAPI(message) {
      else if(message.message.documentMessage){
          messageData.mediaMessage = true
          messageData['mediaType'] = 'DOCUMENT'
-         messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'document')
+         const buffer = await conn.downloadMediaMessage(message)
+         const fileTitle = message.message.documentMessage.title
+         const fileExtension = fileTitle.substring(fileTitle.lastIndexOf('.'))
+         const fileName = `document-${message.messageTimestamp}-${message.key.id}${fileExtension}`
+         messageData['mediaUrl'] = fileName
+         fs.writeFile(`whatsMedia/${fileName}`, buffer, error => {
+             if(error){ console.log(error) } else console.log('DOCUMENTO SALVO COM SUCESSO!')
+         })
      }
      else if(message.message.videoMessage){
          messageData.mediaMessage = true
