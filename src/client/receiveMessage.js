@@ -1,14 +1,7 @@
 import axios from "axios";
 import {conn} from "../whatsapp/connectWhats.js";
-import * as fs from "fs";
-
-const urlBase = 'http://127.0.0.1:8080'
-const mediaFolder = 'whatsMedia'
-// const urlBase = 'http://128.0.0.1:8080'
-// const mediaFolder = '/whatsMedia'
-
-
-
+import * as fs from 'fs';
+import {mediaFolder, urlBase} from "../static/staticVars.js";
 
 export async function whatsToAPI(message) {
      let messageData = {

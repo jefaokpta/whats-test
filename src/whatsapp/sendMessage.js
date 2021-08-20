@@ -1,5 +1,6 @@
 import {MessageType, Mimetype} from '@adiwajshing/baileys'
 import {WhatsConnection} from "./whatsConnection.js";
+import {mediaFolder} from "../static/staticVars.js";
 
 const conn = WhatsConnection.connection
 
@@ -17,7 +18,7 @@ export function sendMediaMessage(fileUpload) {
         ptt: fileUpload.ptt,
         filename: fileUpload.filePath
     }
-    conn.sendMessage (fileUpload.remoteJid, { url: `whatsMedia/outbox/${fileUpload.filePath}` }, messageDetail.messageType, messageOptions)
+    conn.sendMessage (fileUpload.remoteJid, { url: `${mediaFolder}/outbox/${fileUpload.filePath}` }, messageDetail.messageType, messageOptions)
         .then(message => console.log(message.key))
         .catch(error => console.log(error))
 }
