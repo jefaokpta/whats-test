@@ -1,4 +1,4 @@
-import { MessageType } from '@adiwajshing/baileys'
+import {MessageType, Mimetype} from '@adiwajshing/baileys'
 import {WhatsConnection} from "./whatsConnection.js";
 
 const conn = WhatsConnection.connection
@@ -8,16 +8,55 @@ export function sendTxt(message) {
         .then(message => console.log(message.key))
         .catch(error => console.log(error))
 }
-// const id = 'abcd@s.whatsapp.net' // the WhatsApp ID
-// // send a simple text!
-// const sentMsg  = await conn.sendMessage (id, 'oh hello there', MessageType.text)
-// // send a location!
-// const sentMsg  = await conn.sendMessage(id, {degreesLatitude: 24.121231, degreesLongitude: 55.1121221}, MessageType.location)
-// // send a contact!
-// const vcard = 'BEGIN:VCARD\n' // metadata of the contact card
-//     + 'VERSION:3.0\n'
-//     + 'FN:Jeff Singh\n' // full name
-//     + 'ORG:Ashoka Uni;\n' // the organization of the contact
-//     + 'TEL;type=CELL;type=VOICE;waid=911234567890:+91 12345 67890\n' // WhatsApp ID + phone number
-//     + 'END:VCARD'
-// const sentMsg  = await conn.sendMessage(id, {displayname: "Jeff", vcard: vcard}, MessageType.contact)
+
+export function sendMediaMessage(fileUpload) {
+    const messageDetail = messageDetails(fileUpload)
+    const messageOptions = {
+        caption: fileUpload.caption,
+        mimetype: messageDetail.mimeType,
+        ptt: fileUpload.ptt,
+        filename: fileUpload.filePath
+    }
+    conn.sendMessage (fileUpload.remoteJid, { url: `whatsMedia/outbox/${fileUpload.filePath}` }, messageDetail.messageType, messageOptions)
+        .then(message => console.log(message.key))
+        .catch(error => console.log(error))
+}
+
+function messageDetails(fileUpload) {
+    switch (fileUpload.fileType) {
+        case 'IMAGE':
+            return  imageMimeType(fileUpload.filePath)
+        case 'DOCUMENT':
+            return { messageType: MessageType.document, mimeType: Mimetype.pdf}
+        case 'VIDEO':
+            return { messageType: MessageType.video, mimeType: Mimetype.mp4}
+        case 'AUDIO':
+            return audioMimeType(fileUpload)
+    }
+}
+
+function audioMimeType(fileUpload) {
+    if(fileUpload.ptt){
+        return {
+            messageType: MessageType.audio,
+            mimeType: Mimetype.ogg
+        }
+    }
+    return {
+        messageType: MessageType.audio,
+        mimeType: Mimetype.mp4Audio
+    }
+}
+
+function imageMimeType(name) {
+    if(name.substring(name.lastIndexOf('.')) === '.png'){
+        return {
+            messageType: MessageType.image,
+            mimeType: Mimetype.png
+        }
+    }
+    return {
+        messageType: MessageType.image,
+        mimeType: Mimetype.jpeg
+    }
+}
