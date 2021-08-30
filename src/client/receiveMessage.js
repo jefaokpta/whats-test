@@ -22,7 +22,7 @@ export async function whatsToAPI(message) {
          messageData.mediaMessage = true
          messageData['mediaType'] = 'DOCUMENT'
          const buffer = await conn.downloadMediaMessage(message)
-         const fileTitle = message.message.documentMessage.title
+         const fileTitle = message.message.documentMessage.fileName
          const fileExtension = fileTitle.substring(fileTitle.lastIndexOf('.'))
          const fileName = `document-${message.messageTimestamp}-${message.key.id}${fileExtension}`
          messageData['mediaUrl'] = fileName
