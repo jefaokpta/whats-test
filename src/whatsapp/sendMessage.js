@@ -10,6 +10,23 @@ export function sendTxt(message) {
         .catch(error => console.log(error))
 }
 
+export function sendButtonsMessage(message) {
+    // send a buttons message!
+    const buttons = [
+        {buttonId: '1', buttonText: {displayText: 'Sim'}, type: 1},
+        {buttonId: '0', buttonText: {displayText: 'Não'}, type: 1}
+    ]
+    const buttonMessage = {
+        contentText: message.btnText,
+        footerText: message.btnFooterText,
+        buttons: buttons,
+        headerType: 1
+    }
+    conn.sendMessage (message.remoteJid, buttonMessage, MessageType.buttonsMessage)
+        .then(message => console.log(message.key))
+        .catch(error => console.log(error))
+}
+
 export function sendMediaMessage(fileUpload) {
     const messageDetail = messageDetails(fileUpload)
     const messageOptions = {

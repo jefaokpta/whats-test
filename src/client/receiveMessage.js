@@ -17,8 +17,7 @@ export async function whatsToAPI(message) {
          messageData.mediaMessage = true
          messageData['mediaType'] = 'AUDIO'
          messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'audio')
-     }
-     else if(message.message.documentMessage){
+     } else if(message.message.documentMessage){
          messageData.mediaMessage = true
          messageData['mediaType'] = 'DOCUMENT'
          const buffer = await conn.downloadMediaMessage(message)
@@ -32,24 +31,30 @@ export async function whatsToAPI(message) {
          fs.writeFile(`${mediaFolder}/${fileName}`, buffer, error => {
              if(error){ console.log(error) } else console.log('DOCUMENTO SALVO COM SUCESSO!')
          })
-     }
-     else if(message.message.videoMessage){
+     } else if(message.message.videoMessage){
          messageData.mediaMessage = true
          messageData['mediaType'] = 'VIDEO'
          messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'video')
          if(message.message.videoMessage.caption){
              messageData['mediaCaption'] = message.message.videoMessage.caption
          }
-     }
-     else if(message.message.imageMessage){
+     } else if(message.message.imageMessage){
          messageData.mediaMessage = true
          messageData['mediaType'] = 'IMAGE'
          messageData['mediaUrl'] = await downloadAndSaveMedia(message, 'image')
          if(message.message.imageMessage.caption){
              messageData['mediaCaption'] = message.message.imageMessage.caption
          }
-     }
-     else{
+     } else if (message.message.buttonsMessage){
+         console.log('::::::::: BOTAO PERGUNTA')
+         console.log(message)
+         return
+     }else if (message.message.buttonsResponseMessage){
+         console.log(';;;;;;;;;;;; BOTAO RESPOSTA')
+         console.log(message)
+         messageData.message = message.message
+         return axios.post(`${urlBase}/api/messages/responses`, messageData)
+     }else{
          messageData.message = message.message
      }
      return axios.post(`${urlBase}/api/messages`, messageData)

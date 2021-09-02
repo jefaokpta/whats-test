@@ -1,6 +1,6 @@
 import {connectToWhatsApp} from "./whatsapp/connectWhats.js";
 import express from "express";
-import {mediaMessageController, messageController} from "./controller/messageController.js";
+import {buttonMessageController, mediaMessageController, messageController} from "./controller/messageController.js";
 import {profilePicture} from "./controller/profilePictureController.js";
 
 const router = express()
@@ -13,6 +13,7 @@ connectToWhatsApp ()
 
 
 router.use('/whats/messages', messageController)
+router.use('/whats/messages/buttons', buttonMessageController)
 router.use('/whats/messages/medias', mediaMessageController)
 router.use('/whats/profile/picture', profilePicture)
 
