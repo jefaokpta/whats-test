@@ -66,11 +66,16 @@ export async function connectToWhatsApp () {
     }).catch(e => console.log(e.message))
 
     console.log('TENTANDO CONEXAO')
-    await conn.connect ()
-        .then(() => {
-            salvaSessao()
-            console.log('CONECTOU COM SUCESSO')
-        }).catch(error => console.log(error.message))
+
+    async function connectWA() {
+        await conn.connect()
+            .then(() => {
+                salvaSessao()
+                console.log('CONECTOU COM SUCESSO')
+            }).catch(error => console.log(error.message))
+    }
+
+    await connectWA();
 
     function salvaSessao() {
         console.log (`SALVANDO SESSAO`)
@@ -88,6 +93,17 @@ export async function connectToWhatsApp () {
             console.log(e.message)
         }
     }
+
+    conn.on('close', reason => {
+        console.log(`DESCONECTADO ${reason.reason} RECONECTANDO? ${reason.isReconnecting}`)
+        setTimeout(() => {
+            connectWA()
+        }, 180000)
+    })
+
+    // conn.on('ws-close', reason => {
+    //     console.log(`WS DESCONECTADO ${reason.reason}`)
+    // })
 
     conn.on('chat-update', async chatUpdate => {
         // `chatUpdate` is a partial object, containing the updated properties of the chat
