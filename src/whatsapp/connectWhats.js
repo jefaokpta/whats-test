@@ -7,13 +7,24 @@ export const conn = WhatsConnection.connection
 export async function connectToWhatsApp () {
     //const authFile = './auth_info.json'
 
-    // conn.connectOptions = {
-    //     waitOnlyForLastMessage: false,
-    //     waitForChats: true,
-    //     maxRetries: Infinity,
-    //     phoneResponseTime: 10_000,
-    //     alwaysUseTakeover: true,
-    // }
+    conn.connectOptions = {
+        /** fails the connection if no data is received for X seconds */
+        maxIdleTimeMs: 60_000,
+        /** maximum attempts to connect */
+        maxRetries: Infinity,
+        /** max time for the phone to respond to a connectivity test */
+        phoneResponseTime: 30_000,
+        /** minimum time between new connections */
+        connectCooldownMs: 10000,
+        /** agent used for WS connections (could be a proxy agent) */
+        agent: undefined,
+        /** agent used for fetch requests -- uploading/downloading media */
+        fetchAgent: undefined,
+        /** always uses takeover for connecting */
+        alwaysUseTakeover: true,
+        /** log QR to terminal */
+        logQR: true
+    }
 
     // called when WA sends chats
     // this can take up to a few minutes if you have thousands of chats!
