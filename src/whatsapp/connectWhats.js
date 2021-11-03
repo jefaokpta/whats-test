@@ -7,6 +7,11 @@ export const conn = WhatsConnection.connection
 export async function connectToWhatsApp () {
     //const authFile = './auth_info.json'
 
+    /** The version of WhatsApp Web we're telling the servers we are
+      VERSAO DO WHATS WEB
+     */
+    conn.version = [2, 2140, 12];
+
     conn.connectOptions = {
         /** fails the connection if no data is received for X seconds */
         maxIdleTimeMs: 60_000,
