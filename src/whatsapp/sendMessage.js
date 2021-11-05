@@ -13,8 +13,9 @@ export function sendTxt(message) {
 export function sendButtonsMessage(message) {
     // send a buttons message!
     const buttons = [
-        {buttonId: '1', buttonText: {displayText: 'Sim'}, type: 1},
-        {buttonId: '0', buttonText: {displayText: 'Não'}, type: 1}
+        {buttonId: '3', buttonText: {displayText: '😃'}, type: 1},
+        {buttonId: '2', buttonText: {displayText: '😐'}, type: 1},
+        {buttonId: '1', buttonText: {displayText: '😩'}, type: 1}
     ]
     const buttonMessage = {
         contentText: message.btnText,
