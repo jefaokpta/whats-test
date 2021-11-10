@@ -54,7 +54,21 @@ export async function whatsToAPI(message) {
          console.log(message)
          messageData.message = message.message
          return axios.post(`${urlBase}/api/messages/responses`, messageData)
-     }else{
+     } else if(message.message.contactMessage){
+         console.log(';;;;;;;;;;;;; RECEBIDO CONTATO')
+         let cut = message.message.contactMessage.vcard.split('waid=')[1];
+         messageData.message = {
+             conversation: `${message.message.contactMessage.displayName}: ${cut.split(':')[0]}`
+         }
+     }else if(message.message.contactsArrayMessage){
+         console.log(';;;;;;;;;;;;; RECEBIDO ARRAY CONTATOS')
+         messageData.message = {conversation: ''}
+         message.message.contactsArrayMessage.contacts.forEach(contact => {
+            let cut = contact.vcard.split('waid=')[1];
+            messageData.message.conversation += `${contact.displayName}: ${cut.split(':')[0]} \n`
+         })
+         console.log(messageData.message)
+     } else{
          messageData.message = message.message
      }
      return axios.post(`${urlBase}/api/messages`, messageData)
