@@ -8,7 +8,7 @@ export async function whatsToAPI(message) {
          key: message.key,
          message: null,
          messageTimestamp: message.messageTimestamp,
-         status: message.status,
+         status: message.status || 0,
          company: process.env.COMPANY || 12,
          instanceId: process.env.API_PORT || 3001,
          mediaMessage: false
